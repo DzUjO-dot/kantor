@@ -37,4 +37,4 @@ Wyświetlanie tabeli kursów
 Przeliczanie walut
 Komunikacja aplikacji mobilnej z backendem
 Obsługa zapytań REST API
-
+;
