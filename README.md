@@ -29,13 +29,14 @@ kantor/
 │   └── node_modules/
 │
 └── mobile-kantor/       # Aplikacja mobilna (Expo / React Native)
+```
 Wymagania
 
 Node.js (zalecane: LTS)
 
 npm (lub yarn)
 
-Expo CLI (uruchamianie aplikacji mobilnej przez npx expo)
+Expo (uruchamianie aplikacji mobilnej: npx expo start)
 
 (Opcjonalnie) Android Studio / emulator lub aplikacja Expo Go na telefonie
 
@@ -81,9 +82,3 @@ Symulowana wymiana walut
 Komunikacja aplikacji mobilnej z backendem
 
 Obsługa zapytań REST API
-
-Jak to działa (w skrócie)
-
-Backend udostępnia API do pobierania kursów i wykonywania przeliczeń / wymiany.
-
-Aplikacja mobilna pobiera dane z backendu i prezentuje je użytkownikowi w czytelnym interfejsie.
