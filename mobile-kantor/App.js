@@ -87,6 +87,12 @@ function AuthScreen({ onLoggedIn }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  useEffect(() => {
+    if (Platform.OS === 'web') {
+      document.title = 'Logowanie do portfela';
+    }
+  }, []);
+
   const handleSubmit = async () => {
     try {
       setLoading(true);
@@ -419,7 +425,17 @@ function TransactionsScreen({ token }) {
   const [loading, setLoading] = useState(true);
   const [txs, setTxs] = useState([]);
 
-  const loadTxs = async () => {
+  const formatTxDate = (value) => {
+    if (!value) return '';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return String(value);
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(
+      date.getHours()
+    )}:${pad(date.getMinutes())}`;
+  };
+
+  const loadTxs = useCallback(async () => {
     try {
       setLoading(true);
       const data = await apiRequest('/transactions', 'GET', null, token);
@@ -429,11 +445,17 @@ function TransactionsScreen({ token }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     loadTxs();
-  }, []);
+  }, [loadTxs]);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadTxs();
+    }, [loadTxs])
+  );
 
   if (loading) {
     return (
@@ -463,15 +485,15 @@ function TransactionsScreen({ token }) {
               <Text style={styles.listItemText}>
                 {item.type} {item.currency_code} {item.amount.toFixed(4)}
               </Text>
-              <Text>PLN: {item.base_amount_pln.toFixed(2)}</Text>
-            </View>
-            <Text style={{ fontSize: 12 }}>
-              {item.created_at?.replace('T', ' ').slice(0, 16)}
-            </Text>
+            <Text>PLN: {item.base_amount_pln.toFixed(2)}</Text>
           </View>
-        )}
-      />
-    </SafeAreaView>
+          <Text style={{ fontSize: 12 }}>
+            {formatTxDate(item.created_at)}
+          </Text>
+        </View>
+      )}
+    />
+  </SafeAreaView>
   );
 }
 
@@ -523,8 +545,16 @@ export default function App() {
     );
   }
 
+  const documentTitle =
+    Platform.OS === 'web'
+      ? {
+          formatter: (options, route) =>
+            options?.title ?? route?.name ?? 'Logowanie do portfela',
+        }
+      : undefined;
+
   return (
-    <NavigationContainer>
+    <NavigationContainer documentTitle={documentTitle}>
       {token ? <MainTabs token={token} onLogout={handleLogout} /> : <AuthScreen onLoggedIn={setToken} />}
     </NavigationContainer>
   );
